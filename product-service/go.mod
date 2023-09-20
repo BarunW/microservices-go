@@ -1,4 +1,4 @@
-module microservice
+module "github.com/BarnW/microservices-go/product-service"
 
 go 1.21.1
 

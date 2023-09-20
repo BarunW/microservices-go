@@ -7,8 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"productimage/files"
-
+    "github.com/BarunW/microservices-go/productimage/files"
 	//"strconv"
 
 	"github.com/gorilla/mux"

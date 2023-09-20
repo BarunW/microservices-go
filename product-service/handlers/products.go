@@ -18,8 +18,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"microservice/data"
-	"net/http"
+    "net/http"
+    "github.com/BarnW/microservices-go/product-service/data"
 )
 
 // A list of products returns in the response

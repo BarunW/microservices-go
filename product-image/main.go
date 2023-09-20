@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+    //local module
+    "github.com/BarunW/microservices-go/productimage/files"
+    "github.com/BarunW/microservices-go/productimage/handlers"
 
 	//"path"
-	"productimage/files"
-	"productimage/handlers"
 	"time"
 
 	"github.com/gorilla/mux"

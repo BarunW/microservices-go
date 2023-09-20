@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"microservice/handlers"
+	"github.com/BarnW/microservices-go/product-service/handlers"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,7 +22,7 @@ func main() {
     ph:= handlers.NewProducts(l)
     
     // gRPC clients server
-
+    
     // create a new servemux from gorilla/mux package
     sm:= mux.NewRouter()
 

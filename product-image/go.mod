@@ -1,4 +1,4 @@
-module productimage
+module "github.com/BarunW/microservices-go/productimage"
 
 go 1.21.1
 

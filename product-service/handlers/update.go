@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"fmt"
-	"microservice/data"
+	"github.com/BarnW/microservices-go/product-service/data"
 	"net/http"
 	"strconv"
 	"github.com/gorilla/mux"

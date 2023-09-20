@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"microservice/data"
+    "github.com/BarnW/microservices-go/product-service/data"
 	"net/http"
 )
 
