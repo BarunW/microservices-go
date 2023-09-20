@@ -1,4 +1,4 @@
-module currency
+module "github.com/BarunW/microservices-go/currency-service"
 
 go 1.21.1
 
