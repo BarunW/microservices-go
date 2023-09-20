@@ -1,0 +1,49 @@
+basePath: /
+consumes:
+    - application/json
+definitions:
+    Product:
+        description: Product represents a product in the system
+        x-go-package: _/home/dbarun/go/microservices/data
+info:
+    description: Documentation for product API
+    title: of Product API
+    version: 0.0.1
+paths:
+    /{id}:
+        delete:
+            description: |-
+                Returns a list of products
+                response:
+                201: No content
+            operationId: deleteProduct
+            parameters:
+                - description: 'The id of the product to delete from the database '
+                  format: int64
+                  in: path
+                  name: id
+                  required: true
+                  type: integer
+                  x-go-name: ID
+            tags:
+                - products
+    /products:
+        get:
+            description: |-
+                Returns a list of products
+                response:
+                200: productsResponse
+            operationId: listProducts
+produces:
+    - application/json
+responses:
+    productsResponse:
+        description: 'A productsResponse is a response  of all products '
+        schema:
+            items: {}
+            type: array
+    validationError:
+        description: A ValidationError is an error that is used when the required input fails validation.
+schemes:
+    - http
+swagger: "2.0"
