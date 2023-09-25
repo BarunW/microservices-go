@@ -1,8 +1,9 @@
 package handlers
 
 import (
-    "github.com/BarnW/microservices-go/product-service/data"
 	"net/http"
+
+	"github.com/BarnW/microservices-go/product-service/data"
 )
 
 // swagger:route GET /products listProducts
@@ -10,14 +11,32 @@ import (
 // response:
 // 200: productsResponse
 
-func(p *Products)  GetProducts(rw http.ResponseWriter, r *http.Request){
-   p.l.Println("Handle Get Products") 
-   
-   lp := data.GetProducts()
 
-   // serialize the list to JSON
-    err := lp.ToJSON(rw)
+type GenericErrorMessage struct{
+    Message error
+}
+
+
+func(p *Products)  GetProducts(rw http.ResponseWriter, r *http.Request){
+    
+    rw.Header().Add("Content-Type","application/json")
+    lp := data.Products{}
+    cur := r.URL.Query().Get("cur")
+    // getRate
+    prods, err := p.productDB.GetProducts(cur)
     if err != nil{
-        http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+        rw.WriteHeader(http.StatusInternalServerError)
+        lp.ToJSON(&GenericErrorMessage{Message: err}, rw)
+        return
+    }
+    // Serialize to JSON
+    err = lp.ToJSON(prods,rw)
+    if err != nil { 
+        p.l.Error("Unable to serialize the prod", err)
+        return
     }
 }
+
+
+
+

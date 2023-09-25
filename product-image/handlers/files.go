@@ -9,7 +9,6 @@ import (
 	"path/filepath"
     "github.com/BarunW/microservices-go/productimage/files"
 	//"strconv"
-
 	"github.com/gorilla/mux"
 )
 

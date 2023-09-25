@@ -18,10 +18,10 @@ func (p *Products) UpdateProduct(rw http.ResponseWriter, r *http.Request){
         http.Error(rw,"Server Error", http.StatusInternalServerError)
         return 
     }
-
+    
     prod := r.Context().Value(KeyProduct{}).(data.Product) 
 
-    err := data.UpdateProduct(id, &prod)
+    err := p.productDB.UpdateProduct(id, &prod)
     
     if err == data.ErrorProductNotFound {
         http.Error(rw, "Product Not Found", http.StatusNotFound)

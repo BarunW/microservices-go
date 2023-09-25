@@ -2,24 +2,26 @@
 //
 // Documentation for product API
 //
-//  Schemes: http
-//  BasePath :/
-//  Version: 0.0.1
+//	Schemes: http
+//	BasePath :/
+//	Version: 0.0.1
 //
-//  Consumes:
-//  - application/json
-// 
-//  Produces:
-//  - application/json
+//	Consumes:
+//	- application/json
+//
+//	Produces:
+//	- application/json
 //
 // swagger:meta
 package handlers
+
 import (
 	"context"
-	"fmt"
-	"log"
-    "net/http"
-    "github.com/BarnW/microservices-go/product-service/data"
+	"fmt"	
+	"net/http"
+    "log/slog" 
+	"github.com/BarnW/microservices-go/product-service/data"
+	"github.com/BarunW/microservices-go/currency-service/protos"
 )
 
 // A list of products returns in the response
@@ -55,9 +57,7 @@ type productsResponseWrapper struct {
 } 
 
 // swagger:response noContent 
-type productsNoContent struct{
-     
-}
+type productsNoContent struct{}
 
 // swagger:parameters deleteProduct
 type producIDParameterWrapper struct{
@@ -69,11 +69,13 @@ type producIDParameterWrapper struct{
 
 // Products is a http.Handler
 type Products struct{
-    l *log.Logger
+    l *slog.Logger       
+    productDB *data.ProductsDB
 }
 
-func NewProducts(l *log.Logger) *Products{
- return &Products{l}
+func NewProducts(l *slog.Logger, cc protos.CurrencyClient) *Products{
+    pdb := data.NewProductDB(cc, l  )
+    return &Products{l, pdb}
 }
 
 func (p *Products) unMarshalJSONBody(rw http.ResponseWriter, r *http.Request ) *data.Product{
@@ -96,7 +98,7 @@ func(p *Products) MiddlewareProduct(next http.Handler) http.Handler{
         prod := *p.unMarshalJSONBody(rw, r) 
         err := prod.Validate()
         if err != nil{
-            p.l.Println("[ERROR] validating product", err)
+            p.l.Debug("[ERROR] validating product", err)
             http.Error(rw,fmt.Sprintf("Error wash your hand %s", err), http.StatusBadRequest)
             return
         }
