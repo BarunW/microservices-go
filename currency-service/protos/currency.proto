@@ -4,22 +4,48 @@ package protos;
 
 option go_package="./protos";
 
-// Unary gRPC
+import "google/rpc/status.proto";
+
+
 service Currency {
+// Unary gRPC
+    // GetRate returns the exchange rate for the two provided currency codes
     rpc GetRate(RateRequest) returns (RateResponse);
-    rpc SubscribeRates(stream RateRequest) returns (stream RateResponse);
+// bidirectional gRPC 
+    // SubscribeRates allows a client to subscribe for changes in an exchange Rate 
+    // When the rate changes a response will be sent 
+    rpc SubscribeRates(stream RateRequest) returns (stream StreamingRateResponse);
+
 }
 
+// RateRequest defines the request for a GetRate call
 message RateRequest{
+    // Base is the base currency code for the rate
     Currencies Base = 1;
+
+    // Destination is the destinatin currency code for rate
     Currencies Destination = 2;
 }
 
+// RateRsponse is the Response from a GetRate call, it contains
+// rate which is a floating point number and can be used to conver between the 
+// two Currencies specified in the request 
 message RateResponse{
     Currencies Base = 1;
     Currencies Destination = 2;
+
+    // Rate is the returned currency rate
     double Rate = 3;
 }
+
+message StreamingRateResponse{
+    oneof message {
+        RateResponse rate_response = 1;
+        google.rpc.Status error = 2;
+    }
+}
+
+
 // Currencies is an enum which represents the allowed currencies for the API
 enum Currencies {
   EUR=0;

@@ -107,3 +107,49 @@ func (c *Currency) SubscribeRates( src protos.Currency_SubscribeRatesServer) err
     }
     return nil
 }
+
+
+
+func (c *Currency) SubscribeRatesV2( src protos.Currency_SubscribeRatesServer) error{
+    for {
+        rr, err := src.Recv()
+        if err == io.EOF{
+            slog.Info("Unable to read from client", "error", err)
+            break
+        }
+        if err != nil {
+            slog.Error("Unable to read from client", "error", err)
+            break
+        }
+        slog.Info("Handle client request",rr)
+
+        rrs, ok := c.subscriptions[src]
+        if !ok {
+            rrs = []*protos.RateRequest{}
+        }
+        // check that subscriptions does not exists
+      // check if already in the subscribe list and return a custom gRPC error
+		for _, r := range rrs {
+			// if we already have subscribe to this currency return an error
+			if r.Base == rr.Base && r.Destination == rr.Destination {
+				slog.Error("Subscription already active", "base", rr.Base.String(), "dest", rr.Destination.String())
+
+				grpcError := status.New(codes.InvalidArgument, "Subscription already active for rate")
+				grpcError, err = grpcError.WithDetails(rr)
+				if err != nil {
+					slog.Error("Unable to add metadata to error message", "error", err)
+					continue
+				}
+
+				// Can't return error as that will terminate the connection, instead must send an error which
+				// can be handled by the client Recv stream.
+				rrs := &protos.StreamingRateResponse_Error{Error: grpcError.Proto()}
+				src.Send(&protos.StreamingRateResponse{Message: rrs})
+			}
+		}
+        //rate, err := c.rates.GetRate(rr.GetBase().String(), rr.GetDestination().String())
+        rrs = append(rrs, rr)
+        c.subscriptions[src] = rrs
+    }
+    return nil
+}
