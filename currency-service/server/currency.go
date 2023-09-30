@@ -33,7 +33,11 @@ func (c *Currency) handleUpdates(){
                     slog.Error("[Unable to update the get  rate]", rr.GetBase().String(), rr.GetDestination().String(), err)
                     break outer           
                 }
-                errs := k.Send(&protos.RateResponse{Base: rr.Base, Destination: rr.Destination, Rate: rate})            
+                errs := k.Send(&protos.StreamingRateResponse{
+                    Message:&protos.StreamingRateResponse_RateResponse{
+                        RateResponse: &protos.RateResponse{Base: rr.Base, Destination: rr.Destination, Rate: rate},
+                    },
+                })            
                 if errs != nil{
                     slog.Error("[Unable to update the rate]", rr.GetBase().String(), rr.GetDestination().String(), err)
                     break outer
